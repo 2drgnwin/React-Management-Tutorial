@@ -8,7 +8,7 @@ app.use(express.urlencoded({ extended: false })); //Body-Parser #parse data's bo
 const data = fs.readFileSync('./database.json');
 const conf = JSON.parse(data);
 
-// DB setting
+/*DB SETTING */
 const mysql = require('mysql');
 const connection = mysql.createConnection({
   host: conf.host,
@@ -24,7 +24,7 @@ const multer = require('multer');
 const upload = multer({ dest: './upload' });
 app.use('/image', express.static('./upload'));
 app.post('/api/customers', upload.single('image'), (req, res) => {
-  let sql = 'INSERT INTO customer VALUES (null, ?, ?, ?, ?, ?)';
+  let sql = 'INSERT INTO customer VALUES (null, ?, ?, ?, ?, ? , now(), 0)';
   let image = '/image/' + req.file.filename;
   // file name은 multer lib가 겹치지 않는 이름으로 알아서 할당해줌
   let name = req.body.name;
@@ -38,15 +38,29 @@ app.post('/api/customers', upload.single('image'), (req, res) => {
   });
 });
 
-//table 대소문자 구분
-app.get('/api/customers', (req, res) => {
-  connection.query('SELECT * FROM customer', (err, rows, fields) => {
+app.delete('/api/customers/:id', (req, res) => {
+  let sql = 'UPDATE customer SET isDeleted = 1 WHERE ID = ?';
+  let params = [req.params.id];
+  console.log(params);
+  console.log(1);
+  connection.query(sql, params, (err, rows, fields) => {
     res.send(rows);
   });
 });
 
+//query 에서 table 대소문자 구분함 <- because of mysql?
+app.get('/api/customers', (req, res) => {
+  connection.query(
+    'SELECT * FROM customer WHERE isDeleted = 0',
+    (err, rows, fields) => {
+      res.send(rows);
+    }
+  );
+});
+
+/*오류 핸들링 */
 app.use((req, res, next) => {
-  res.status(404).send('Sorry cant find that!');
+  res.status(404).send("Sorry can't find that!");
 });
 
 app.use((err, req, res, next) => {

@@ -74,12 +74,13 @@ class App extends Component {
           <Table className={classes.table}>
             <TableHead>
               <TableRow>
-                <TableCell key="1">번호</TableCell>
-                <TableCell key="2">이미지</TableCell>
-                <TableCell key="3">이름</TableCell>
-                <TableCell key="4">생년월일</TableCell>
-                <TableCell key="5">성별</TableCell>
-                <TableCell key="6">직업</TableCell>
+                <TableCell>번호</TableCell>
+                <TableCell>이미지</TableCell>
+                <TableCell>이름</TableCell>
+                <TableCell>생년월일</TableCell>
+                <TableCell>성별</TableCell>
+                <TableCell>직업</TableCell>
+                <TableCell>설정</TableCell>
               </TableRow>
             </TableHead>
 
@@ -89,6 +90,7 @@ class App extends Component {
                 return (
                   <TableBody>
                     <Customer
+                      stateRefresh={this.stateRefresh}
                       key={c.id}
                       id={c.id}
                       image={c.image}
