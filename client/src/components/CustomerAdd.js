@@ -15,11 +15,13 @@ class CustomerAdd extends Component {
     };
   }
 
-  // addCustomer함수 → post결과 → 콘솔 출력
+  // submit버튼 → addCustomer함수 → post data → /api/customers
   handleFormSubmit = (e) => {
     e.preventDefault();
     this.addCustomer().then((response) => {
-      console.log(response.data);
+      // console.log(response.data);
+      this.props.stateRefresh();
+      //고객데이터 추가 → 고객데이터 불러옴 : 비동기라 이 순서 보장 못해서 여기 위치
     });
     this.setState({
       file: null,
@@ -29,7 +31,6 @@ class CustomerAdd extends Component {
       job: '',
       fileName: '',
     });
-    window.location.reload();
   };
   //file값 변경 → fn → file 자체, file명 입력
 
@@ -46,7 +47,7 @@ class CustomerAdd extends Component {
     this.setState(nextState);
   };
 
-  // data를 post에 담는 함수
+  // 추가된 data를 post에 담는 함수
   addCustomer = () => {
     const url = '/api/customers';
     const formData = new FormData();

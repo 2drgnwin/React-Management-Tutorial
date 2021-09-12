@@ -27,11 +27,26 @@ const styles = (theme) => ({
 });
 
 class App extends Component {
-  state = {
-    customers: '',
-    completed: 0,
+  constructor(props) {
+    super(props);
+    this.state = {
+      customer: '',
+      completed: 0,
+    };
+  }
+
+  //고객데이터 state 초기화 → callApi로 고객 list 새로 불러옴
+  stateRefresh = () => {
+    this.setState({
+      customer: '',
+      completed: 0,
+    });
+    this.callApi()
+      .then((res) => this.setState({ customers: res }))
+      .catch((err) => console.log(err));
   };
-  // component가 mount 되고나면 실행해서 api 불러옴
+
+  // component가 mount 되고나면 실행해서 api(고객목록) 불러옴
   componentDidMount() {
     this.timer = setInterval(this.progress, 20);
     this.callApi()
@@ -39,7 +54,7 @@ class App extends Component {
       .catch((err) => console.log(err));
   }
 
-  // api를 가져오는 비동기 함수. proxy 설정 port에서 가져옴
+  // api(고객목록)를 가져오는 비동기 함수. proxy 설정 port에서 가져옴
   callApi = async () => {
     const response = await fetch('/api/customers');
     const body = await response.json();
@@ -98,7 +113,7 @@ class App extends Component {
             )}
           </Table>
         </Paper>
-        <CustomerAdd></CustomerAdd>
+        <CustomerAdd stateRefresh={this.stateRefresh}></CustomerAdd>
       </div>
     );
   }
